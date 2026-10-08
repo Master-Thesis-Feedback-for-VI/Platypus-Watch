@@ -1,5 +1,6 @@
 #include "cJSON.h"
 #include "driver/i2c_master.h"
+#include "driver/ledc.h"
 #include "esp_crt_bundle.h"
 #include "esp_event.h"
 #include "esp_log.h"
@@ -19,9 +20,16 @@
 #define REG_MODE 0x01
 #define REG_RTP_INPUT 0x02
 #define REG_CONTROL3 0x1D
-#define CONTROL3_VALUE 0x28     // ERM open loop + unsigned RTP data
-#define HAPTIC_MIN_AMP 160      // amplitude for strength 1, raise if 1 is still silent
-#define HAPTIC_PULSE_US 200000  // auto-stop 200 ms after the last message
+#define CONTROL3_VALUE 0x28 // ERM open loop + unsigned RTP data
+#define HAPTIC_MIN_AMP                                                         \
+  160 // amplitude for strength 1, raise if 1 is still silent
+#define HAPTIC_PULSE_US 200000 // auto-stop 200 ms after the last message
+
+#define BL_PIN 45        // T-Watch S3 display backlight
+#define BL_MIN_DUTY 30   // dimmest point of the pulse (0..1023)
+#define BL_MAX_DUTY 1023 // brightest point of the pulse
+#define BL_STEP 16
+#define BL_STEP_MS 20 // full dim-to-bright sweep is about 1.2 s
 
 static const char *TAG = "mqtt_sub";
 
@@ -29,6 +37,50 @@ static i2c_master_dev_handle_t drv = NULL;
 static esp_timer_handle_t stop_timer = NULL;
 static esp_mqtt_client_handle_t client;
 static bool mqtt_started = false;
+
+/* ---------------- Backlight pulse ---------------- */
+
+static void backlight_task(void *arg) {
+  int duty = BL_MIN_DUTY;
+  int dir = BL_STEP;
+  for (;;) {
+    ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, duty);
+    ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0);
+    duty += dir;
+    if (duty >= BL_MAX_DUTY) {
+      duty = BL_MAX_DUTY;
+      dir = -BL_STEP;
+    } else if (duty <= BL_MIN_DUTY) {
+      duty = BL_MIN_DUTY;
+      dir = BL_STEP;
+    }
+    vTaskDelay(pdMS_TO_TICKS(BL_STEP_MS));
+  }
+}
+
+static void backlight_start(void) {
+  ledc_timer_config_t timer = {
+      .speed_mode = LEDC_LOW_SPEED_MODE,
+      .duty_resolution = LEDC_TIMER_10_BIT,
+      .timer_num = LEDC_TIMER_0,
+      .freq_hz = 5000,
+      .clk_cfg = LEDC_AUTO_CLK,
+  };
+  ESP_ERROR_CHECK(ledc_timer_config(&timer));
+
+  ledc_channel_config_t ch = {
+      .gpio_num = BL_PIN,
+      .speed_mode = LEDC_LOW_SPEED_MODE,
+      .channel = LEDC_CHANNEL_0,
+      .timer_sel = LEDC_TIMER_0,
+      .duty = BL_MIN_DUTY,
+      .hpoint = 0,
+  };
+  ESP_ERROR_CHECK(ledc_channel_config(&ch));
+
+  xTaskCreate(backlight_task, "backlight", 2048, NULL, 1, NULL);
+  ESP_LOGI(TAG, "backlight pulse started");
+}
 
 /* ---------------- Haptics (DRV2605) ---------------- */
 
@@ -211,6 +263,7 @@ void app_main(void) {
   }
   ESP_ERROR_CHECK(r);
 
+  backlight_start();
   haptic_init();
 
   ESP_ERROR_CHECK(esp_netif_init());

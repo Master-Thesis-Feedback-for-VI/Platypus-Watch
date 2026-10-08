@@ -1,7 +1,7 @@
 idf_component_register(
     SRCS "main.c"
     INCLUDE_DIRS "."
-    REQUIRES esp_driver_i2c esp_timer json mqtt esp_wifi nvs_flash esp_event esp_netif esp-tls
+    REQUIRES esp_driver_i2c esp_driver_ledc esp_timer json mqtt esp_wifi nvs_flash esp_event esp_netif esp-tls
 )
 
 set(ENV_FILE "${CMAKE_SOURCE_DIR}/../.env")
