@@ -40,6 +40,7 @@ dependencies {
     val composeBom = platform(libs.androidx.compose.bom)
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.paho.mqtt.android)
     implementation(libs.androidx.activity.compose)
     // The app and instrumentation tests each need the BOM's version constraints.
     //noinspection GradleDuplicateDependency

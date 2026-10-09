@@ -7,8 +7,10 @@ junitVersion = "1.3.0"
 activityCompose = "1.13.0"
 composeBom = "2026.09.00"
 wearCompose = "1.7.1"
+pahoMqttAndroid = "4.5.1"
 
 [libraries]
+paho-mqtt-android = { group = "com.github.hannesa2", name = "paho.mqtt.android", version.ref = "pahoMqttAndroid" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
