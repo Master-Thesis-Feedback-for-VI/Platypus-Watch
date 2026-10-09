@@ -4,6 +4,17 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
+val env = rootProject.file(".env").readLines()
+    .filter { it.isNotBlank() && !it.trimStart().startsWith("#") }.associate { line ->
+        val (key, value) = line.split("=", limit = 2)
+        key.trim() to value.trim()
+    }
+
+fun buildConfigString(value: String): String =
+    "\"" + value
+        .replace("\\", "\\\\")
+        .replace("\"", "\\\"") + "\""
+
 android {
     namespace = "com.github.dayvil.platypus_watch"
     compileSdk {
@@ -34,6 +45,39 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
+    }
+
+    defaultConfig {
+        buildConfigField(
+            "String",
+            "MQTT_USER_AGENT_NAME",
+            buildConfigString(requireNotNull(env["MQTT_USER_AGENT_NAME"]))
+        )
+
+        buildConfigField(
+            "String",
+            "MQTT_PASSWORD",
+            buildConfigString(requireNotNull(env["MQTT_PASSWORD"]))
+        )
+
+        buildConfigField(
+            "String",
+            "MQTT_URL",
+            buildConfigString(requireNotNull(env["MQTT_URL"]))
+        )
+
+        buildConfigField(
+            "String",
+            "TOPIC_RIGHT",
+            buildConfigString(requireNotNull(env["TOPIC_RIGHT"]))
+        )
+
+        buildConfigField(
+            "String",
+            "TOPIC_PROFILE_SWITCH",
+            buildConfigString(requireNotNull(env["TOPIC_PROFILE_SWITCH"]))
+        )
     }
 }
 
@@ -41,9 +85,13 @@ dependencies {
     val composeBom = platform(libs.androidx.compose.bom)
 
     implementation(libs.androidx.core.ktx)
-    implementation(libs.paho.mqtt.android)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.kempmobil.mqtt.core)
+    implementation(libs.kempmobil.mqtt.client)
+    implementation(libs.kempmobil.mqtt.client.ws)
+    implementation(libs.ktor.client.cio)
+
     // The app and instrumentation tests each need the BOM's version constraints.
     //noinspection GradleDuplicateDependency
     implementation(composeBom)
@@ -58,4 +106,15 @@ dependencies {
     androidTestImplementation(composeBom)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.junit)
+
+    // Coroutines
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+
+    // Compose lifecycle integration
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    // Coroutine testing
+    testImplementation(libs.kotlinx.coroutines.test)
 }
