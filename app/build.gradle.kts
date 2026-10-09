@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -41,6 +42,7 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.paho.mqtt.android)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.activity.compose)
     // The app and instrumentation tests each need the BOM's version constraints.
     //noinspection GradleDuplicateDependency

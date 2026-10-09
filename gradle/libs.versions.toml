@@ -8,8 +8,10 @@ activityCompose = "1.13.0"
 composeBom = "2026.09.00"
 wearCompose = "1.7.1"
 pahoMqttAndroid = "4.5.1"
+kotlinxSerialization = "1.11.0"
 
 [libraries]
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 paho-mqtt-android = { group = "com.github.hannesa2", name = "paho.mqtt.android", version.ref = "pahoMqttAndroid" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -28,3 +30,4 @@ androidx-wear-compose-material3 = { group = "androidx.wear.compose", name = "com
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

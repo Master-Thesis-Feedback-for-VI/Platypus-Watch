@@ -19,8 +19,11 @@ import com.github.dayvil.platypus_watch.R
 import com.github.dayvil.platypus_watch.presentation.theme.PlatypusWatchTheme
 
 class MainActivity : ComponentActivity() {
+    private lateinit var platypusMQTT: PlatypusMQTT
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        platypusMQTT = PlatypusMQTT(applicationContext, url = TODO(), credentials = TODO())
         setContent {
             PlatypusWatchApp()
         }
@@ -32,7 +35,9 @@ fun PlatypusWatchApp() {
     PlatypusWatchTheme {
         AppScaffold {
             Box(
-                modifier = Modifier.fillMaxSize().padding(24.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
