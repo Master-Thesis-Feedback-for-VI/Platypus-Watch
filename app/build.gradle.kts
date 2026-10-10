@@ -91,6 +91,7 @@ dependencies {
     implementation(libs.kempmobil.mqtt.client)
     implementation(libs.kempmobil.mqtt.client.ws)
     implementation(libs.ktor.client.cio)
+    implementation(libs.material.icons.extended)
 
     // The app and instrumentation tests each need the BOM's version constraints.
     //noinspection GradleDuplicateDependency
