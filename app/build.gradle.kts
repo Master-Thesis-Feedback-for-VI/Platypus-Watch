@@ -69,8 +69,8 @@ android {
 
         buildConfigField(
             "String",
-            "TOPIC_RIGHT",
-            buildConfigString(requireNotNull(env["TOPIC_RIGHT"]))
+            "TOPIC_LEFT",
+            buildConfigString(requireNotNull(env["TOPIC_LEFT"]))
         )
 
         buildConfigField(

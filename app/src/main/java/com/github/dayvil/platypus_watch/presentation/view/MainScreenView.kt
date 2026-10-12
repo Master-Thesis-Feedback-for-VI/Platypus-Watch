@@ -24,8 +24,8 @@ import com.github.dayvil.platypus_watch.presentation.PlatypusVibration
 import com.github.dayvil.platypus_watch.presentation.model.RecMessage
 import com.github.dayvil.platypus_watch.presentation.model.RecMessageVariants
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.milliseconds
 
 const val TAG = "MainScreenView"
 
@@ -63,12 +63,13 @@ fun MainScreenView() {
         }
         isConnected = true
 
-        mqttClient.hapticMessages.collect {
-            scope.launch {
-                val strength = it.increaseDiff
-                haptics.applyHaptics(strength)
-                vibrationStrength = strength
-                delay(haptics.delay.milliseconds * 3)
+        mqttClient.hapticMessages.collectLatest {
+            val strength = it.increaseDiff.coerceIn(0, 10)
+            haptics.applyHaptics(strength)
+            vibrationStrength = strength
+            if (strength > 0) {
+                delay(haptics.durationMs)
+                haptics.stop()
                 vibrationStrength = 0
             }
         }

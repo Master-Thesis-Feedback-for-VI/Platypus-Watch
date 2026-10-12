@@ -13,8 +13,19 @@ dependencies:
     source:
       type: idf
     version: 5.5.2
+  sensorlib:
+    component_hash: dc24550ea52f58eb6789ef66b9c997b0c81a0c528c19767780b483cc3ae5a666
+    dependencies:
+    - name: idf
+      version: '>=4.4'
+    source:
+      git: https://github.com/lewisxhe/SensorLib.git
+      path: .
+      type: git
+    version: 477fc682e9ed30ced39774f3b7e93a1504968884
 direct_dependencies:
 - espressif/mqtt
-manifest_hash: dd18294d670cc4555c4752315f1a7af66794892f3ce3782fee64e13052a721cb
+- sensorlib
+manifest_hash: 1ce7cec4ee7e877ba6b773089f69f2b8c7652d8ef8a28fddd62f5fd8fca875dd
 target: esp32s3
 version: 2.0.0

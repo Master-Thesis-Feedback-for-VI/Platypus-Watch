@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 
 class PlatypusMQTT : AutoCloseable {
-    val hapticTopic = BuildConfig.TOPIC_RIGHT
+    val hapticTopic = BuildConfig.TOPIC_LEFT
     val profileTopic = BuildConfig.TOPIC_PROFILE_SWITCH
     val credentials = Credentials()
     val serverUri = BuildConfig.MQTT_URL

@@ -1,2 +1,5 @@
 dependencies:
   espressif/mqtt: "*"
+  sensorlib:
+    git: https://github.com/lewisxhe/SensorLib.git
+    version: "477fc682e9ed30ced39774f3b7e93a1504968884"

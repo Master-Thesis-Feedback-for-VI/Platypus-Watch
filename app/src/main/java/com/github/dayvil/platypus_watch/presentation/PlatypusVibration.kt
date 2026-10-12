@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.VibrationEffect
 import android.os.VibratorManager
 
-class PlatypusVibration(context: Context, val delay: Long = 200) {
+class PlatypusVibration(context: Context, val durationMs: Long = 5_000) {
     private val vibrator = context
         .getSystemService(VibratorManager::class.java)
         .defaultVibrator
@@ -19,8 +19,7 @@ class PlatypusVibration(context: Context, val delay: Long = 200) {
             return
         }
 
-        // Scale duration too: some watches cannot vary vibration amplitude.
-        val duration = (delay * level / 10).coerceAtLeast(1L)
+        // Keep the timeout fixed even on watches without amplitude control.
         val amplitude = if (vibrator.hasAmplitudeControl()) {
             40 + (level - 1) * (255 - 40) / 9
         } else {
@@ -29,7 +28,7 @@ class PlatypusVibration(context: Context, val delay: Long = 200) {
 
         vibrator.vibrate(
             VibrationEffect.createOneShot(
-                duration,
+                durationMs,
                 amplitude
             )
         )
