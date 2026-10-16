@@ -11,7 +11,7 @@ static HapticDriver_DRV2605 drv;
 static PmicAXP2101 pmic;
 static TaskHandle_t task;
 // Match PlatypusVibration's timeout, independent of signal strength.
-static constexpr uint32_t VIBRATION_DURATION_MS = 5000;
+static constexpr uint32_t VIBRATION_DURATION_MS = 800;
 // Signed open-loop RTP: 0 stops, 1..127 drives forward. Keep level 1 at 40
 // (already similar to Android), but soften higher levels for cross-watch
 // matching. This cap is an empirical tuning value, not full-scale drive.

@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.VibrationEffect
 import android.os.VibratorManager
 
-class PlatypusVibration(context: Context, val durationMs: Long = 5_000) {
+class PlatypusVibration(context: Context, val durationMs: Long = 800) {
     private val vibrator = context
         .getSystemService(VibratorManager::class.java)
         .defaultVibrator
