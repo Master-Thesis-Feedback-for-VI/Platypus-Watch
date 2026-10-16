@@ -12,10 +12,12 @@ static PmicAXP2101 pmic;
 static TaskHandle_t task;
 // Match PlatypusVibration's timeout, independent of signal strength.
 static constexpr uint32_t VIBRATION_DURATION_MS = 5000;
-// Signed open-loop RTP: 0 stops, 1..127 drives forward. Keep the minimum
-// above the motor's low-drive dead zone.
+// Signed open-loop RTP: 0 stops, 1..127 drives forward. Keep level 1 at 40
+// (already similar to Android), but soften higher levels for cross-watch
+// matching. This cap is an empirical tuning value, not full-scale drive.
 static constexpr uint8_t MIN_AMPLITUDE = 40;
-static constexpr uint8_t MAX_AMPLITUDE = 127;
+static constexpr uint8_t
+MAX_AMPLITUDE = 60;
 static constexpr uint8_t ERM_OPEN_LOOP = 0x20;
 static constexpr uint8_t DATA_FORMAT_RTP = 0x08;
 
