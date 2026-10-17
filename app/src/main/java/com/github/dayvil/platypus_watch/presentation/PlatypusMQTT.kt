@@ -2,6 +2,8 @@ package com.github.dayvil.platypus_watch.presentation
 
 import com.github.dayvil.platypus_watch.BuildConfig
 import com.github.dayvil.platypus_watch.presentation.model.Credentials
+import com.github.dayvil.platypus_watch.presentation.model.DeviceType
+import com.github.dayvil.platypus_watch.presentation.model.LogData
 import com.github.dayvil.platypus_watch.presentation.model.RecMessage
 import com.github.dayvil.platypus_watch.presentation.model.SendMessage
 import de.kempmobil.ktor.mqtt.PublishRequest
@@ -34,7 +36,8 @@ class PlatypusMQTT : AutoCloseable {
         }
         .map {
             val content = it.payload.toByteArray().decodeToString()
-            json.decodeFromString<SendMessage>(content)
+            val logData = json.decodeFromString<LogData>(content)
+            json.decodeFromString<SendMessage>(logData.data)
         }
 
     suspend fun connectAndSubscribe(): Result<Unit> = runCatching {
@@ -55,9 +58,14 @@ class PlatypusMQTT : AutoCloseable {
 
     suspend fun publishProfile(profile: RecMessage): Result<PublishResponse> {
         val encodedProfile = json.encodeToString(profile)
+        val logData = LogData(
+            device = DeviceType.GalaxyWatch,
+            tag = profileTopic,
+            data = encodedProfile
+        )
         val publishRequest = PublishRequest(profileTopic) {
             desiredQoS = QoS.AT_LEAST_ONCE
-            payload(encodedProfile)
+            payload(json.encodeToString(logData))
         }
 
         return client.publish(publishRequest)

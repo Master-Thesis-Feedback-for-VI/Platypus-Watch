@@ -21,7 +21,7 @@
 #define BL_TASK_STACK_BYTES 2048
 #define BL_TASK_PRIORITY 1
 
-#define MQTT_PAYLOAD_BUFFER_SIZE 64 // includes the terminating NUL
+#define MQTT_PAYLOAD_BUFFER_SIZE 1024 // includes the LogData envelope and NUL
 #define MQTT_SUBSCRIBE_QOS 0        // at-most-once delivery
 
 static const char *TAG = "mqtt_sub";
@@ -91,12 +91,30 @@ static void handle_message(esp_mqtt_event_handle_t e) {
     return;
   }
 
-  cJSON *diff = cJSON_GetObjectItemCaseSensitive(root, "increaseDiff");
+  cJSON *device = cJSON_GetObjectItemCaseSensitive(root, "device");
+  cJSON *tag = cJSON_GetObjectItemCaseSensitive(root, "tag");
+  cJSON *data = cJSON_GetObjectItemCaseSensitive(root, "data");
+  if (!cJSON_IsString(device) || !cJSON_IsString(tag) ||
+      !cJSON_IsString(data)) {
+    ESP_LOGW(TAG, "invalid LogData envelope");
+    cJSON_Delete(root);
+    return;
+  }
+
+  cJSON *payload = cJSON_Parse(data->valuestring);
+  if (!payload) {
+    ESP_LOGW(TAG, "invalid JSON in LogData.data");
+    cJSON_Delete(root);
+    return;
+  }
+
+  cJSON *diff = cJSON_GetObjectItemCaseSensitive(payload, "increaseDiff");
   if (cJSON_IsNumber(diff)) {
     apply_haptic(diff->valueint);
   } else {
-    ESP_LOGW(TAG, "missing increaseDiff in: %s", buf);
+    ESP_LOGW(TAG, "missing increaseDiff in LogData.data: %s", data->valuestring);
   }
+  cJSON_Delete(payload);
   cJSON_Delete(root);
 }
 

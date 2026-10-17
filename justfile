@@ -25,7 +25,7 @@ haptic cmd="1":
     for side in left right; do
       npx mqtt pub \
         -t "IoT/device/haptic_$side" \
-        -m '{"increaseDiff":{{cmd}}}' \
+        -m "{\"device\":\"IOsApp\",\"tag\":\"IoT/device/haptic_$side\",\"data\":\"{\\\"increaseDiff\\\":{{cmd}}}\"}" \
         -h "$host" \
         -p 443 \
         --protocol wss \
