@@ -106,5 +106,24 @@ fun MainScreenView() {
         )
         Text("Rotation: $rotation")
         Text("Vibration: $vibrationStrength")
+
+//        Row() {
+//            Button(onClick = {
+//                scope.launch {
+//                    val msg = RecMessage(cmd = RecMessageVariants.PREV)
+//                    mqttClient.publishProfile(msg)
+//                        .onSuccess { Log.i(TAG, "MQTT profile publish response: $it") }
+//                        .onFailure { Log.e(TAG, "MQTT profile publish failed", it) }
+//                }
+//            }) { Text("Prev") }
+//            Button(onClick = {
+//                scope.launch {
+//                    val msg = RecMessage(cmd = RecMessageVariants.NEXT)
+//                    mqttClient.publishProfile(msg)
+//                        .onSuccess { Log.i(TAG, "MQTT profile publish response: $it") }
+//                        .onFailure { Log.e(TAG, "MQTT profile publish failed", it) }
+//                }
+//            }) { Text("Next") }
+//        }
     }
 }
